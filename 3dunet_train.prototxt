@@ -13,7 +13,6 @@ layer {
         batch_size: 20
     }
 }
-
 layer {
     name: "encoding0/Conv3D"
     type: "Convolution"
