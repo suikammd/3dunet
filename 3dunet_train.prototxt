@@ -1,13 +1,21 @@
 name: "3dunet"
+force_backword: true
 layer {
     name: "data"
-    type" "Input"
+    type: "HDF5Data"
     top: "data"
-    input_param { shape: {dim: 1 dim 3 dim: 32 dim: 32 dim: 32}}
+    top: "label"
+    include {
+        phase: TRAIN
+    }
+    hdf5_data_param {
+        source: "./T2Flair_patch.mat"
+        batch_size: 20
+    }
 }
 
 layer {
-    name: "encoding0_0"
+    name: "encoding0/Conv3D"
     type: "Convolution"
     bottom: "data"
     top: "encoding0_0"
@@ -347,3 +355,78 @@ layer {
     }
 }
 
+# decoding path
+layer {
+    name: ""
+    type: "Deconvoluton"
+    bottom: ""
+    top: ""
+    param {
+        lr_mult:
+        decay_mult:
+    }
+    param {
+        lr_mult:
+        decay_mult:
+    }
+    convulution_param {
+        num_output:
+        kernel_size:
+        stride:
+        weight_filler {
+            type: ""
+        }
+        bias_filler {
+            type: ""
+            value:
+        }
+    }
+}
+layer {
+    bottom: ""
+    top: ""
+    name: ""
+    type: "BatchNorm"
+    batch_norm_param  {
+        user_global_stats: true
+    }
+}
+layer {
+    name: ""
+    type: "ReLU"
+    bottom: ""
+    top: ""
+}
+layer {
+    type: "Concat"
+    name: ""
+    top: ""
+    bottom: ""
+    bottom: ""
+}
+layer {
+    name: ""
+    type: "Deconvoluton"
+    bottom: ""
+    top: ""
+    param {
+        lr_mult:
+        decay_mult:
+    }
+    param {
+        lr_mult:
+        decay_mult:
+    }
+    convulution_param {
+        num_output:
+        kernel_size:
+        stride:
+        weight_filler {
+            type: ""
+        }
+        bias_filler {
+            type: ""
+            value:
+        }
+    }
+}
