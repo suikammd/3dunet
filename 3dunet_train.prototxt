@@ -337,3 +337,13 @@ layer {
         engine: CAFFE
     }
 }
+layer {
+    name: "pool4/drop"
+    type: "Dropout"
+    bottom: "pool4"
+    top: "pool4/drop"
+    dropout_param {
+        dropout_ratio: 0.1
+    }
+}
+
