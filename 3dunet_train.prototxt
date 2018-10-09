@@ -1,5 +1,5 @@
 name: "3dunet"
-force_backword: true
+force_backword: bottom
 layer {
     name: "data"
     type: "HDF5Data"
@@ -13,14 +13,23 @@ layer {
         batch_size: 20
     }
 }
+
 layer {
     name: "encoding0/Conv3D"
     type: "Convolution"
     bottom: "data"
-    top: "encoding0_0"
+    top: "encoding0/Conv3D"
+	param {
+		lr_mult: 1
+		decay_mult: 1
+	}
+	param {
+		lr_mult: 2
+		decay_mult: 0
+	}
     convolution_param {
         num_output: 32
-        kernel_size; 3
+        kernel_size: 3
         stride: 1
         weight_filer {
             type: "gaussian"
@@ -33,28 +42,36 @@ layer {
     }
 }
 layer {
-    name: "encoding0_bn1"
-    top: "encoding0_0"
-    bottom: "encoding0_0"
+    name: "encoding0/bn1"
+    top: "encoding0/Conv3D"
+    bottom: "encoding0/Conv3D"
     type: "BatchNorm"
     batch_norm_param {
-        use_global_stats: true
+        use_global_stats: false
     }
 }
 layer {
-    name: "encoding0_relu1"
+    name: "encoding0/Relu1"
     type: "ReLU"
-    bottom: "encoding0_bn1"
-    top: "encoding0_bn1"
+    bottom: "encoding0/Conv3D"
+    top: "encoding0/Conv3D"
 }
 layer {
-    name: "encoding0_1"
+    name: "encoding0/Conv3D1"
     type: "Convolution"
-    bottom: "encoding0_relu1"
-    top: "encoding0_1"
+    bottom: "encoding0/Conv3D"
+    top: "encoding0/Conv3D1"
+	param {
+		lr_mult: 1
+		decay_mult: 1
+	}
+	param {
+		lr_mult: 2
+		decay_mult: 0
+	}
     convolution_param {
         num_output: 32
-        kernel_size; 3
+        kernel_size: 3
         stride: 1
         weight_filer {
             type: "gaussian"
@@ -67,25 +84,25 @@ layer {
     }
 }
 layer {
-    name: "encoding0_bn2"
-    bottom: "encoding0_1"
-    top: "encoding0_bn2"
+    name: "encoding0/bn2"
+    bottom: "encoding0/Conv3D1"
+    top: "encoding0/Conv3D1"
     type: "BatchNorm"
     batch_norm_param {
-        use_global_stats: true
+        use_global_stats: false
     }
 }
 layer {
-    name: "encoding0_relu2"
+    name: "encoding0/Relu2"
     type: "ReLU"
-    top: "encoding0_relu2"
-    bottom: "encoding0_bn2"
+    top: "encoding0/Conv3D1"
+    bottom: "encoding0/Conv3D1"
 }
 
 layer {
     name: "pool1"
     type: "Pooling"
-    bottom: "encoding0_relu2"
+    bottom: "encoding0/Conv3D1"
     top: "pool1"
     pooling_param {
         pool: MAX
@@ -94,16 +111,22 @@ layer {
         engine: CAFFE
     }
 }
-
-
 layer {
-    name: "encoding1_0"
+    name: "encoding1/Conv3D"
     type: "Convolution"
-    bottom: "data"
-    top: "encoding1_0"
+    bottom: "pool1"
+    top: "encoding1/Conv3D"
+	param {
+		lr_mult: 1
+		decay_mult: 1
+	}
+	param {
+		lr_mult: 2
+		decay_mult: 0
+	}
     convolution_param {
         num_output: 64
-        kernel_size; 3
+        kernel_size: 3
         stride: 1
         weight_filer {
             type: "gaussian"
@@ -116,29 +139,36 @@ layer {
     }
 }
 layer {
-    name: "encoding1_0"
-    top: "encoding1_0"
-    bottom: "encoding1_0"
-    name: "encoding1_bn1"
+    name: "encoding1/bn1"
+    top: "encoding1/Conv3D"
+    bottom: "encoding1/Conv3D"
     type: "BatchNorm"
     batch_norm_param {
-        use_global_stats: true
+        use_global_stats: false
     }
 }
 layer {
-    name: "encoding1_relu1"
+    name: "encoding1/Relu1"
     type: "ReLU"
-    bottom: "encoding1_bn1"
-    top: "encoding1_bn1"
+    bottom: "encoding1/Conv3D"
+    top: "encoding1/Conv3D"
 }
 layer {
-    name: "encoding1_1"
+    name: "encoding1/Conv3D1"
     type: "Convolution"
-    bottom: "encoding1_relu1"
-    top: "encoding1_relu1"
+    bottom: "encoding1/Conv3D"
+    top: "encoding1/Conv3D1"
+	param {
+		lr_mult: 1
+		decay_mult: 1
+	}
+	param {
+		lr_mult: 2
+		decay_mult: 0
+	}
     convolution_param {
         num_output: 64
-        kernel_size; 3
+        kernel_size: 3
         stride: 1
         weight_filer {
             type: "gaussian"
@@ -151,25 +181,25 @@ layer {
     }
 }
 layer {
-    name: "encoding1_1"
-    top: "encoding1_1"
-    name: "encoding1_bn2"
+    name: "encoding1/bn2"
+    bottom: "encoding1/Conv3D1"
+    top: "encoding1/Conv3D1"
     type: "BatchNorm"
     batch_norm_param {
-        use_global_stats: true
+        use_global_stats: false
     }
 }
 layer {
-    name: "encoding1_relu2"
+    name: "encoding1/Relu2"
     type: "ReLU"
-    bottom: "encoding1_bn2"
-    top: "encoding1_bn2"
+    top: "encoding1/Conv3D1"
+    bottom: "encoding1/Conv3D1"
 }
 
 layer {
     name: "pool2"
     type: "Pooling"
-    bottom: "encoding1_relu2"
+    bottom: "encoding1/Conv3D1"
     top: "pool2"
     pooling_param {
         pool: MAX
@@ -178,15 +208,22 @@ layer {
         engine: CAFFE
     }
 }
-
 layer {
-    name: "encoding2_0"
+    name: "encoding2/Conv3D"
     type: "Convolution"
-    bottom: "data"
-    top: "encoding2_0"
+    bottom: "pool2"
+    top: "encoding2/Conv3D"
+	param {
+		lr_mult: 1
+		decay_mult: 1
+	}
+	param {
+		lr_mult: 2
+		decay_mult: 0
+	}
     convolution_param {
         num_output: 128
-        kernel_size; 3
+        kernel_size: 3
         stride: 1
         weight_filer {
             type: "gaussian"
@@ -199,29 +236,36 @@ layer {
     }
 }
 layer {
-    name: "encoding2_0"
-    top: "encoding2_0"
-    bottom: "encoding2_0"
-    name: "encoding2_bn1"
+    name: "encoding2/bn1"
+    top: "encoding2/Conv3D"
+    bottom: "encoding2/Conv3D"
     type: "BatchNorm"
     batch_norm_param {
-        use_global_stats: true
+        use_global_stats: false
     }
 }
 layer {
-    name: "encoding2_relu1"
+    name: "encoding2/Relu1"
     type: "ReLU"
-    bottom: "encoding2_bn1"
-    top: "encoding2_bn1"
+    bottom: "encoding2/Conv3D"
+    top: "encoding2/Conv3D"
 }
 layer {
-    name: "encoding2_1"
+    name: "encoding2/Conv3D1"
     type: "Convolution"
-    bottom: "encoding2_relu1"
-    top: "encoding2_relu1"
+    bottom: "encoding2/Conv3D"
+    top: "encoding2/Conv3D1"
+	param {
+		lr_mult: 1
+		decay_mult: 1
+	}
+	param {
+		lr_mult: 2
+		decay_mult: 0
+	}
     convolution_param {
         num_output: 128
-        kernel_size; 3
+        kernel_size: 3
         stride: 1
         weight_filer {
             type: "gaussian"
@@ -234,25 +278,25 @@ layer {
     }
 }
 layer {
-    name: "encoding2_1"
-    top: "encoding2_1"
-    name: "encoding2_bn2"
+    name: "encoding2/bn2"
+    bottom: "encoding2/Conv3D1"
+    top: "encoding2/Conv3D1"
     type: "BatchNorm"
     batch_norm_param {
-        use_global_stats: true
+        use_global_stats: false
     }
 }
 layer {
-    name: "encoding2_relu2"
+    name: "encoding2/Relu2"
     type: "ReLU"
-    bottom: "encoding2_bn2"
-    top: "encoding2_bn2"
+    top: "encoding2/Conv3D1"
+    bottom: "encoding2/Conv3D1"
 }
 
 layer {
     name: "pool3"
     type: "Pooling"
-    bottom: "encoding2_relu2"
+    bottom: "encoding2/Conv3D1"
     top: "pool3"
     pooling_param {
         pool: MAX
@@ -261,171 +305,96 @@ layer {
         engine: CAFFE
     }
 }
-
 layer {
-    name: "bottom_0"
+    name: "bottom/Conv3D"
     type: "Convolution"
-    bottom: "data"
-    top: "bottom_0"
+    bottom: "pool3"
+    top: "bottom/Conv3D"
+	param {
+		lr_mult: 1
+		decay_mult: 1
+	}
+	param {
+		lr_mult: 2
+		decay_mult: 0
+	}
     convolution_param {
         num_output: 256
-        kernel_size; 3
-        stride: 1
-        weight_filer {
-            type: "gaussian"
-            std: 0.1
-        }
-        bias_filer {
-            type: "constant"
-            value: 0.0
-        }
-    }
-}
-layer {
-    name: "bottom_0"
-    top: "bottom_0"
-    bottom: "bottom_0"
-    name: "bottom_bn1"
-    type: "BatchNorm"
-    batch_norm_param {
-        use_global_stats: true
-    }
-}
-layer {
-    name: "bottom_relu1"
-    type: "ReLU"
-    bottom: "bottom_bn1"
-    top: "bottom_bn1"
-}
-layer {
-    name: "bottom_1"
-    type: "Convolution"
-    bottom: "bottom_relu1"
-    top: "bottom_relu1"
-    convolution_param {
-        num_output: 256
-        kernel_size; 3
-        stride: 1
-        weight_filer {
-            type: "gaussian"
-            std: 0.1
-        }
-        bias_filer {
-            type: "constant"
-            value: 0.0
-        }
-    }
-}
-layer {
-    name: "bottom_1"
-    top: "bottom_1"
-    name: "bottom_bn2"
-    type: "BatchNorm"
-    batch_norm_param {
-        use_global_stats: true
-    }
-}
-layer {
-    name: "bottom_relu2"
-    type: "ReLU"
-    bottom: "bottom_bn2"
-    top: "bottom_bn2"
-}
-
-layer {
-    name: "pool4"
-    type: "Pooling"
-    bottom: "bottom_relu2"
-    top: "pool4"
-    pooling_param {
-        pool: MAX
         kernel_size: 3
-        stride: 2
-        engine: CAFFE
-    }
-}
-layer {
-    name: "pool4/drop"
-    type: "Dropout"
-    bottom: "pool4"
-    top: "pool4/drop"
-    dropout_param {
-        dropout_ratio: 0.1
-    }
-}
-
-# decoding path
-layer {
-    name: ""
-    type: "Deconvoluton"
-    bottom: ""
-    top: ""
-    param {
-        lr_mult:
-        decay_mult:
-    }
-    param {
-        lr_mult:
-        decay_mult:
-    }
-    convulution_param {
-        num_output:
-        kernel_size:
-        stride:
-        weight_filler {
-            type: ""
+        stride: 1
+        weight_filer {
+            type: "gaussian"
+            std: 0.1
         }
-        bias_filler {
-            type: ""
-            value:
+        bias_filer {
+            type: "constant"
+            value: 0.0
         }
     }
 }
 layer {
-    bottom: ""
-    top: ""
-    name: ""
+    name: "bottom/bn1"
+    top: "bottom/Conv3D"
+    bottom: "bottom/Conv3D"
     type: "BatchNorm"
-    batch_norm_param  {
-        user_global_stats: true
+    batch_norm_param {
+        use_global_stats: false
     }
 }
 layer {
-    name: ""
+    name: "bottom/Relu1"
     type: "ReLU"
-    bottom: ""
-    top: ""
+    bottom: "bottom/Conv3D"
+    top: "bottom/Conv3D"
 }
 layer {
-    type: "Concat"
-    name: ""
-    top: ""
-    bottom: ""
-    bottom: ""
+    name: "bottom/Conv3D1"
+    type: "Convolution"
+    bottom: "bottom/Conv3D"
+    top: "bottom/Conv3D1"
+	param {
+		lr_mult: 1
+		decay_mult: 1
+	}
+	param {
+		lr_mult: 2
+		decay_mult: 0
+	}
+    convolution_param {
+        num_output: 256
+        kernel_size: 3
+        stride: 1
+        weight_filer {
+            type: "gaussian"
+            std: 0.1
+        }
+        bias_filer {
+            type: "constant"
+            value: 0.0
+        }
+    }
 }
 layer {
-    name: ""
-    type: "Deconvoluton"
-    bottom: ""
-    top: ""
-    param {
-        lr_mult:
-        decay_mult:
+    name: "bottom/bn2"
+    bottom: "bottom/Conv3D1"
+    top: "bottom/Conv3D1"
+    type: "BatchNorm"
+    batch_norm_param {
+        use_global_stats: false
     }
-    param {
-        lr_mult:
-        decay_mult:
-    }
-    convulution_param {
-        num_output:
-        kernel_size:
-        stride:
-        weight_filler {
-            type: ""
-        }
-        bias_filler {
-            type: ""
-            value:
-        }
+}
+layer {
+    name: "bottom/Relu2"
+    type: "ReLU"
+    top: "bottom/Conv3D1"
+    bottom: "bottom/Conv3D1"
+}
+layer {
+    name: "drop"
+    type: "Dropout"
+    bottom: "bottom/Conv3D1"
+    top: "bottom/Conv3D1"
+    dropout_param {
+        dropout_ratio: 0.5
     }
 }
