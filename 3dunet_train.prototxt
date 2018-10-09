@@ -14,6 +14,8 @@ layer {
     }
 }
 
+# Encoding path
+
 layer {
     name: "encoding0/Conv3D"
     type: "Convolution"
@@ -397,4 +399,403 @@ layer {
     dropout_param {
         dropout_ratio: 0.5
     }
+}
+
+layer {
+    name: "decoding2/conv3d_transpose"
+    type: "Deconvoluton"
+    bottom: "bottom/Conv3D1"
+    top: "decoding2/conv3d_transpose"
+    param {
+        lr_mult: 1
+        decay_mult: 1
+    }
+    param {
+        lr_mult: 2
+        decay_mult: 0
+    }
+    convulution_param {
+        num_output: 128
+        kernel_size: 2
+        stride: 2
+        weight_filler {
+            type: "xaiver"
+        }
+        bias_filler {
+            type: "constant"
+            value: 0
+        }
+    }
+}
+layer {
+	name: "decoding2/bn"
+    bottom: "decoding2/conv3d_transpose"
+    top: "decoding2/conv3d_transpose"
+    type: "BatchNorm"
+    batch_norm_param  {
+        user_global_stats: false
+    }
+}
+layer {
+    name: "decoding2/Relu"
+    type: "ReLU"
+    bottom: "decoding2/conv3d_transpose"
+    top: "decoding2/conv3d_transpose"
+}
+layer {
+    type: "Concat"
+    name: "concat_0"
+    top: "concat_0"
+    bottom: "decoding2/conv3d_transpose"
+    bottom: "encoding2/Conv3D1"
+}
+layer {
+    name: "decoding2/Conv3D"
+    type: "Convolution"
+    bottom: "concat_0"
+    top: "decoding2/Conv3D"
+	param {
+		lr_mult: 1
+		decay_mult: 1
+	}
+	param {
+		lr_mult: 2
+		decay_mult: 0
+	}
+    convolution_param {
+        num_output: 128
+        kernel_size: 3
+        stride: 1
+        weight_filer {
+            type: "xaiver"
+            std: 0.1
+        }
+        bias_filer {
+            type: "constant"
+            value: 0.0
+        }
+    }
+}
+layer {
+    name: "decoding2/bn1"
+    top: "decoding2/Conv3D"
+    bottom: "decoding2/Conv3D"
+    type: "BatchNorm"
+    batch_norm_param {
+        use_global_stats: false
+    }
+}
+layer {
+    name: "decoding2/Relu1"
+    type: "ReLU"
+    bottom: "decoding2/Conv3D"
+    top: "decoding2/Conv3D"
+}
+layer {
+    name: "decoding2/Conv3D1"
+    type: "Convolution"
+    bottom: "decoding2/Conv3D"
+    top: "decoding2/Conv3D1"
+	param {
+		lr_mult: 1
+		decay_mult: 1
+	}
+	param {
+		lr_mult: 2
+		decay_mult: 0
+	}
+    convolution_param {
+        num_output: 128
+        kernel_size: 3
+        stride: 1
+        weight_filer {
+            type: "xaiver"
+            type: "xaiver"
+            std: 0.1
+        }
+        bias_filer {
+            type: "constant"
+            value: 0.0
+        }
+    }
+}
+layer {
+    name: "decoding2/bn2"
+    bottom: "decoding2/Conv3D1"
+    top: "decoding2/Conv3D1"
+    type: "BatchNorm"
+    batch_norm_param {
+        use_global_stats: false
+    }
+}
+layer {
+    name: "decoding2/Relu2"
+    type: "ReLU"
+    top: "decoding2/Conv3D1"
+    bottom: "decoding2/Conv3D1"
+}
+
+layer {
+    name: "decoding1/conv3d_transpose"
+    type: "Deconvoluton"
+    bottom: "decoding2/Conv3D1"
+    top: "decoding1/conv3d_transpose"
+    param {
+        lr_mult: 1
+        decay_mult: 2
+    }
+    param {
+        lr_mult: 1
+        decay_mult: 0
+    }
+    convulution_param {
+        num_output: 64
+        kernel_size: 2
+        stride: 2
+        weight_filler {
+            type: "xaiver"
+        }
+        bias_filler {
+            type: "constant"
+            value: 0
+        }
+    }
+}
+layer {
+	name: "decoding1/bn"
+    bottom: "decoding1/conv3d_transpose"
+    top: "decoding1/conv3d_transpose"
+    type: "BatchNorm"
+    batch_norm_param  {
+        user_global_stats: false
+    }
+}
+layer {
+    name: "decoding1/Relu"
+    type: "ReLU"
+    bottom: "decoding1/conv3d_transpose"
+    top: "decoding1/conv3d_transpose"
+}
+layer {
+    type: "Concat"
+    name: "concat_1"
+    top: "concat_1"
+    bottom: "decoding1/conv3d_transpose"
+    bottom: "encoding1/Conv3D1"
+}
+layer {
+    name: "decoding1/Conv3D"
+    type: "Convolution"
+    bottom: "concat_1"
+    top: "decoding1/Conv3D"
+	param {
+		lr_mult: 1
+		decay_mult: 1
+	}
+	param {
+		lr_mult: 2
+		decay_mult: 0
+	}
+    convolution_param {
+        num_output: 64
+        kernel_size: 3
+        stride: 1
+        weight_filer {
+            type: "xaiver"
+            std: 0.1
+        }
+        bias_filer {
+            type: "constant"
+            value: 0.0
+        }
+    }
+}
+layer {
+    name: "decoding1/bn1"
+    top: "decoding1/Conv3D"
+    bottom: "decoding1/Conv3D"
+    type: "BatchNorm"
+    batch_norm_param {
+        use_global_stats: false
+    }
+}
+layer {
+    name: "decoding1/Relu1"
+    type: "ReLU"
+    bottom: "decoding1/Conv3D"
+    top: "decoding1/Conv3D"
+}
+layer {
+    name: "decoding1/Conv3D1"
+    type: "Convolution"
+    bottom: "decoding1/Conv3D"
+    top: "decoding1/Conv3D1"
+	param {
+		lr_mult: 1
+		decay_mult: 1
+	}
+	param {
+		lr_mult: 2
+		decay_mult: 0
+	}
+    convolution_param {
+        num_output: 64
+        kernel_size: 3
+        stride: 1
+        weight_filer {
+            type: "xaiver"
+            std: 0.1
+        }
+        bias_filer {
+            type: "constant"
+            value: 0.0
+        }
+    }
+}
+layer {
+    name: "decoding1/bn2"
+    bottom: "decoding1/Conv3D1"
+    top: "decoding1/Conv3D1"
+    type: "BatchNorm"
+    batch_norm_param {
+        use_global_stats: false
+    }
+}
+layer {
+    name: "decoding1/Relu2"
+    type: "ReLU"
+    top: "decoding1/Conv3D1"
+    bottom: "decoding1/Conv3D1"
+}
+layer {
+    name: "decoding0/conv3d_transpose"
+    type: "Deconvoluton"
+    bottom: "decoding1/Conv3D1"
+    top: "decoding0/conv3d_transpose"
+    param {
+        lr_mult: 1
+        decay_mult: 2
+    }
+    param {
+        lr_mult: 1
+        decay_mult: 0
+    }
+    convulution_param {
+        num_output: 32
+        kernel_size: 2
+        stride: 2
+        weight_filler {
+            type: "xaiver"
+        }
+        bias_filler {
+            type: "constant"
+            value: 0
+        }
+    }
+}
+layer {
+	name: "decoding0/bn"
+    bottom: "decoding0/conv3d_transpose"
+    top: "decoding0/conv3d_transpose"
+    type: "BatchNorm"
+    batch_norm_param  {
+        user_global_stats: false
+    }
+}
+layer {
+    name: "decoding0/Relu"
+    type: "ReLU"
+    bottom: "decoding0/conv3d_transpose"
+    top: "decoding0/conv3d_transpose"
+}
+layer {
+    type: "Concat"
+    name: "concat_2"
+    top: "concat_2"
+    bottom: "decoding0/conv3d_transpose"
+    bottom: "encoding0/Conv3D1"
+}
+layer {
+    name: "decoding0/Conv3D"
+    type: "Convolution"
+    bottom: "concat_2"
+    top: "decoding0/Conv3D"
+	param {
+		lr_mult: 1
+		decay_mult: 1
+	}
+	param {
+		lr_mult: 2
+		decay_mult: 0
+	}
+    convolution_param {
+        num_output: 32
+        kernel_size: 3
+        stride: 1
+        weight_filer {
+            type: "xaiver"
+            std: 0.1
+        }
+        bias_filer {
+            type: "constant"
+            value: 0.0
+        }
+    }
+}
+layer {
+    name: "decoding0/bn1"
+    top: "decoding0/Conv3D"
+    bottom: "decoding0/Conv3D"
+    type: "BatchNorm"
+    batch_norm_param {
+        use_global_stats: false
+    }
+}
+layer {
+    name: "decoding0/Relu1"
+    type: "ReLU"
+    bottom: "decoding0/Conv3D"
+    top: "decoding0/Conv3D"
+}
+layer {
+    name: "decoding0/Conv3D1"
+    type: "Convolution"
+    bottom: "decoding0/Conv3D"
+    top: "decoding0/Conv3D1"
+	param {
+		lr_mult: 1
+		decay_mult: 1
+	}
+	param {
+		lr_mult: 2
+		decay_mult: 0
+	}
+    convolution_param {
+        num_output: 32
+        kernel_size: 3
+        stride: 1
+        weight_filer {
+            type: "xaiver"
+            std: 0.1
+        }
+        bias_filer {
+            type: "constant"
+            value: 0.0
+        }
+    }
+}
+layer {
+    name: "decoding0/bn2"
+    bottom: "decoding0/Conv3D1"
+    top: "decoding0/Conv3D1"
+    type: "BatchNorm"
+    batch_norm_param {
+        use_global_stats: false
+    }
+}
+layer {
+    name: "decoding0/Relu2"
+    type: "ReLU"
+    top: "decoding0/Conv3D1"
+    bottom: "decoding0/Conv3D1"
 }
