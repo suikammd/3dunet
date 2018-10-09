@@ -799,3 +799,30 @@ layer {
     top: "decoding0/Conv3D1"
     bottom: "decoding0/Conv3D1"
 }
+layer {
+    name: "logits/Conv3D/Conv3D"
+    type: "Convolution"
+    bottom: "decoding0/Conv3D1"
+    top: "logits/Conv3D/Conv3D"
+	param {
+		lr_mult: 1
+		decay_mult: 1
+	}
+	param {
+		lr_mult: 2
+		decay_mult: 0
+	}
+    convolution_param {
+        num_output: 2
+        kernel_size: 1
+        stride: 1
+        weight_filer {
+            type: "xaiver"
+            std: 0.1
+        }
+        bias_filer {
+            type: "constant"
+            value: 0.0
+        }
+    }
+}
