@@ -800,10 +800,10 @@ layer {
     bottom: "decoding0/Conv3D1"
 }
 layer {
-    name: "logits/Conv3D/Conv3D"
+    name: "logits/Conv3D"
     type: "Convolution"
     bottom: "decoding0/Conv3D1"
-    top: "logits/Conv3D/Conv3D"
+    top: "logits/Conv3D"
 	param {
 		lr_mult: 1
 		decay_mult: 1
@@ -825,4 +825,21 @@ layer {
             value: 0.0
         }
     }
+}
+layer {
+	name: "accuracy"
+	type: "Accuracy"
+	bottom: "logits/Conv3D"
+	bottom: "label"
+	top: "accuracy"
+	include {
+		phase: TEST
+	}
+}
+layer {
+	name: "loss"
+	type: "SoftmatWithLoss"
+	bottom: "logits/Conv3D"
+	bottom: "label"
+	top: "loss"
 }
